@@ -6,8 +6,8 @@ import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 data class EntryState(
-    val firstEntry: LocalDateTime = LocalDateTime.now(),
-    val secondEntry: LocalDateTime = LocalDateTime.now(),
-    val thirdEntry: LocalDateTime = LocalDateTime.now(),
-    val fourthEntry: LocalDateTime = LocalDateTime.now()
+    var firstEntry: LocalDateTime? = null,
+    var secondEntry: LocalDateTime? = null,
+    var thirdEntry: LocalDateTime? = null,
+    var fourthEntry: LocalDateTime? = null
 )
