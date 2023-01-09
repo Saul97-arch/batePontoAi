@@ -1,6 +1,7 @@
 package android.bignerdranch.bateopontoai.presentation
 
 import android.bignerdranch.bateopontoai.R
+import android.bignerdranch.bateopontoai.utils.MaskTransformation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
@@ -26,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -74,7 +77,9 @@ fun MainScreen(
                             value = viewModel.entry1.value,
                             onValueChange = { newValue ->
                                 viewModel.onEntry1Changed(newValue)
-                            }
+                            },
+                            visualTransformation = MaskTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         // stroker
