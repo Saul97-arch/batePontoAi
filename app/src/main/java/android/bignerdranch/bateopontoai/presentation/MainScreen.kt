@@ -1,7 +1,6 @@
 package android.bignerdranch.bateopontoai.presentation
 
 import android.bignerdranch.bateopontoai.R
-import android.bignerdranch.bateopontoai.utils.MaskTransformation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -15,20 +14,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -36,10 +33,13 @@ import androidx.compose.ui.unit.dp
 fun MainScreen(
     viewModel: MainScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+
+    val context = LocalContext.current
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = { },
                 backgroundColor = Color(247, 54, 62),
                 content = {
                     Icon(
@@ -68,39 +68,39 @@ fun MainScreen(
                         .background(Color(red = 248, green = 244, blue = 247, alpha = 255))
                 ) {
                     Column(modifier = Modifier.padding(32.dp)) {
-                        OutlinedTextField(
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = Color.Green,
-                                focusedLabelColor = Color.Black
-                            ),
-                            label = { Text(text = "Entrada 1") },
-                            value = viewModel.entry1.value,
-                            onValueChange = { newValue ->
-                                viewModel.onEntry1Changed(newValue)
-                            },
-                            visualTransformation = MaskTransformation(),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
+                        TimeButton(
+                            context = context,
+                            timeState = viewModel.entry1,
+                            text = "Entrada 1",
+                            viewModel
                         )
+
                         Spacer(modifier = Modifier.height(24.dp))
-                        // stroker
-                        OutlinedTextField(
-                            label = { Text(text = "Saída 1") },
-                            value = viewModel.out1.value,
-                            onValueChange = { }
+
+                        TimeButton(
+                            context = context,
+                            timeState = viewModel.out1,
+                            text = "Saída 2",
+                            viewModel
                         )
+
                         Spacer(modifier = Modifier.height(24.dp))
-                        OutlinedTextField(
-                            label = { Text(text = "Entrada 2") },
-                            value = viewModel.entry2.value,
-                            onValueChange = { newValue ->
-                                //viewModel.onEntry2Changed(newValue)
-                            }
+
+                        TimeButton(
+                            context = context,
+                            timeState = viewModel.entry2,
+                            text = "Entrada 2",
+                            viewModel
                         )
+
                         Spacer(modifier = Modifier.height(24.dp))
-                        OutlinedTextField(
-                            label = { Text(text = "Saída 2") },
-                            value = viewModel.out2.value,
-                            onValueChange = { }
+
+                        TimeButton(
+                            context = context,
+                            timeState = viewModel.out2,
+                            text = "Saída 2",
+                            viewModel
                         )
                     }
                 }
@@ -119,4 +119,6 @@ fun MainScreen(
         }
     }
 }
+
+
 

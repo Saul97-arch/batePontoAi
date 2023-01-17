@@ -11,7 +11,7 @@ class MaskTransformation() : VisualTransformation {
     }
 }
 
-
+// TODO, fuck mask, go to time picker
 fun maskFilter(text: AnnotatedString): TransformedText {
 
     // NNNNN-NNN
@@ -45,20 +45,26 @@ fun maskFilter(text: AnnotatedString): TransformedText {
             // so original to transformed is offset * 2
 
             // 1212, 912
+            // 12:12
+            // 9:12
 
-            if (offset <= 4) return offset
+            // 912 -> 9:12
+            // 1112 -> 11:12
 
-            return 5
+            if (offset <= 1) return offset
+            if (offset <= 3 && out.first().digitToInt() < 10) return offset + 1
+            if (offset <= 4 && out.first().digitToInt() == 1) return offset + 1
+
+            return offset
         }
 
         override fun transformedToOriginal(offset: Int): Int {
-            // 9:12
-            // 12:22
-            // TODO DEBUG TO DISCOVER WHAT IS OFFSSET
-            if (offset <=5) return offset
-            return 4
+
+            return offset
         }
     }
 
     return TransformedText(AnnotatedString(out), numberOffsetTranslator)
 }
+
+// 03/04/1998
