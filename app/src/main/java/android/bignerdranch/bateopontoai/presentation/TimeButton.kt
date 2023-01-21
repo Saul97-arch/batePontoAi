@@ -2,8 +2,6 @@ package android.bignerdranch.bateopontoai.presentation
 
 import android.bignerdranch.bateopontoai.data.HoursAndMinutes
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -13,13 +11,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeButton(
     context: Context,
     timeState: MutableState<HoursAndMinutes>,
     text: String,
-    viewModel: MainScreenViewModel
+    viewModel: MainScreenViewModel,
 ) {
     // TODO time converter to proper string time
     // 9:0 to 9:00

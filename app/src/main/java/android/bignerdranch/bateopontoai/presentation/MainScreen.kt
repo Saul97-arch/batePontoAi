@@ -1,8 +1,7 @@
 package android.bignerdranch.bateopontoai.presentation
 
 import android.bignerdranch.bateopontoai.R
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.bignerdranch.bateopontoai.data.AndroidAlarmScheduler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -28,18 +26,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
     viewModel: MainScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
 
     val context = LocalContext.current
+    val scheduler = AndroidAlarmScheduler(context)
+    viewModel.scheduler = scheduler
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { },
+                onClick = {},
                 backgroundColor = Color(247, 54, 62),
                 content = {
                     Icon(
@@ -104,7 +103,7 @@ fun MainScreen(
                         )
                     }
                 }
-
+                // TODO this will be component with his own logic in the future
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.Center,

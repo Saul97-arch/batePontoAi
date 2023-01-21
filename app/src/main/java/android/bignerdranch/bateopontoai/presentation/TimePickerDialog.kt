@@ -1,15 +1,17 @@
 package android.bignerdranch.bateopontoai.presentation
 
 import android.app.TimePickerDialog
+import android.bignerdranch.bateopontoai.data.AlarmItem
 import android.bignerdranch.bateopontoai.data.HoursAndMinutes
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun timePickerDialog(
     context: Context,
@@ -25,6 +27,12 @@ fun timePickerDialog(
         context,
         { _, hours: Int, minutes: Int ->
             timeState.value = HoursAndMinutes(hours, minutes)
+            val offset = ZonedDateTime.now().offset
+
+            val currentTime = LocalDate.from(LocalDate.now())
+                .atTime(hours, minutes).toEpochSecond(offset) * 1000
+
+            viewModel?.entry1AlarmTime = AlarmItem("Entrada 1", currentTime)
             viewModel?.onEntry1Changed()
         }, calendarHour, calendarMinute, true
     )
