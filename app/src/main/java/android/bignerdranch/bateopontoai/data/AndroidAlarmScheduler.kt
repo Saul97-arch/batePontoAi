@@ -6,6 +6,8 @@ import android.bignerdranch.bateopontoai.AlarmReceiver
 import android.bignerdranch.bateopontoai.AlarmScheduler
 import android.content.Context
 import android.content.Intent
+import java.time.LocalDateTime
+import java.util.*
 
 class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
 
@@ -13,23 +15,27 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
 
     override fun schedule(item: AlarmItem) {
 
+        item.localDateTime?.let {
+            if (item.localDateTime < LocalDateTime.now()) return
+        }
+
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("EXTRA_MESSAGE", item.alarmName)
         }
-        // 5 sec
-        item.timeInMilliseconds?.let {
-            alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                it,
-                AlarmManager.INTERVAL_DAY,
-                PendingIntent.getBroadcast(
-                    context,
-                    item.hashCode(),
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
+
+        val calendar = getCalendarInstance(item)
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            PendingIntent.getBroadcast(
+                context,
+                item.hashCode(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-        }
+        )
+
     }
 
     override fun cancel(item: AlarmItem) {
@@ -41,5 +47,14 @@ class AndroidAlarmScheduler(private val context: Context) : AlarmScheduler {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
+    }
+
+    private fun getCalendarInstance(item: AlarmItem): Calendar {
+        val calendar = Calendar.getInstance()
+        item.localDateTime?.hour?.let { calendar.set(Calendar.HOUR_OF_DAY, it) }
+        item.localDateTime?.minute?.let { calendar.set(Calendar.MINUTE, it) }
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar
     }
 }

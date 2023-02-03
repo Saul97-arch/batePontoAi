@@ -3,16 +3,19 @@ package android.bignerdranch.bateopontoai.presentation
 import android.bignerdranch.bateopontoai.data.AlarmItem
 import android.bignerdranch.bateopontoai.data.AndroidAlarmScheduler
 import android.bignerdranch.bateopontoai.data.HoursAndMinutes
+import android.bignerdranch.bateopontoai.data.Repository
+import android.bignerdranch.bateopontoai.data.RepositoryImpl
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDateTime
 
 class MainScreenViewModel : ViewModel() {
 
-    var lunchTime: Int = 1
-    var round1: Int = 3
-    var round2: Int = 5
+    var repository: Repository? = null
+    private var lunchTime: Long = 1L
+    private var round1: Long = 3L
+    private var round2: Long = 5L
 
     val entry1 = mutableStateOf(HoursAndMinutes())
     val out1 = mutableStateOf(HoursAndMinutes())
@@ -23,16 +26,8 @@ class MainScreenViewModel : ViewModel() {
 
     var entry1AlarmTime: AlarmItem? = null
     var out1AlarmTime: AlarmItem? = null
-    var entry2AlarmTime : AlarmItem? = null
-    var out2AlarmTime : AlarmItem? = null
-
-    // TODO search for various alarm settings
-    // for instance 3 diferent alarm times created
-
-    // USE CASES
-    // For instance
-    // I entered in my work at 9 am
-    // I was suposed to stop my work at 12
+    var entry2AlarmTime: AlarmItem? = null
+    var out2AlarmTime: AlarmItem? = null
 
     fun onEntry1Changed() {
         val entry1Hours = entry1.value.hours
@@ -41,42 +36,65 @@ class MainScreenViewModel : ViewModel() {
         setOut1Value(entry1Hours, entry1Minutes)
         setEntry2Value()
         setOut2Value()
-
-        //out1AlarmTime?.let { scheduler.schedule(it) }
-        //entry2AlarmTime?.let { scheduler.schedule(it) }
-        out2AlarmTime?.let { scheduler.schedule(it) }
+        setCurrentAlarm()
     }
-    // todo get value in millis and pass to current time to verify
-    private fun setOut1Value(hours: Int?, minutes: Int?) {
+
+    fun getCurrentAlarmTimeData(): MutableState<AlarmItem>? {
+        return repository?.getCurrentAlarmStateData()
+    }
+
+    private fun setCurrentAlarmTimeData(alarmItem: AlarmItem) {
+        repository?.setCurrentAlarmStateData(alarmItem)
+    }
+
+    private fun setOut1Value(hours: Long?, minutes: Int?) {
         out1AlarmTime = AlarmItem(
             "Saída 1",
-            entry1AlarmTime?.timeInMilliseconds?.plus(round1 * 3600 * 1000)
+            entry1AlarmTime?.localDateTime?.plusHours(round1)
         )
         out1.value = HoursAndMinutes(hours?.plus(round1), minutes)
-        println("saida 1 " + returnCurrentHour(out1AlarmTime?.timeInMilliseconds))
+        out1AlarmTime?.let { scheduler.schedule(it) }
     }
 
     private fun setEntry2Value() {
         entry2AlarmTime = AlarmItem(
             "Entrada 2 ",
-            out1AlarmTime?.timeInMilliseconds?.plus(lunchTime * 3600 * 1000)
+            out1AlarmTime?.localDateTime?.plusHours(lunchTime)
         )
+        entry2AlarmTime?.let { scheduler.schedule(it) }
         entry2.value = HoursAndMinutes(out1.value.hours?.plus(lunchTime), out1.value.minutes)
-        println("entrada 2 " + returnCurrentHour(entry2AlarmTime?.timeInMilliseconds))
     }
 
     private fun setOut2Value() {
         out2AlarmTime = AlarmItem(
             "Saída 2",
-            entry2AlarmTime?.timeInMilliseconds?.plus(round2 * 3600 * 1000)
+            entry2AlarmTime?.localDateTime?.plusHours(round2)
         )
+        out2AlarmTime?.let { scheduler.schedule(it) }
         out2.value = HoursAndMinutes(entry2.value.hours?.plus(round2), entry2.value.minutes)
-        println("saida 2 " + returnCurrentHour(out2AlarmTime?.timeInMilliseconds))
     }
 
-    private fun returnCurrentHour(hour : Long?) = SimpleDateFormat("HH:mm").format(hour?.let {
-        Date(
-            it
-        )
-    })
+    private fun setCurrentAlarm() {
+        val now = LocalDateTime.now()
+
+        if (
+            now.isBefore(out1AlarmTime?.localDateTime)
+        ) {
+            setCurrentAlarmTimeData(AlarmItem("saída 1", out1AlarmTime?.localDateTime))
+        }
+
+        if (
+            !now.isBefore(out1AlarmTime?.localDateTime)
+            && now.isBefore(entry2AlarmTime?.localDateTime)
+        ) {
+            setCurrentAlarmTimeData(AlarmItem("entrada 2", entry2AlarmTime?.localDateTime))
+        }
+
+        if (
+            !now.isBefore(entry2AlarmTime?.localDateTime)
+            && now.isBefore(out2AlarmTime?.localDateTime)
+        ) {
+            setCurrentAlarmTimeData(AlarmItem("saída 2", out2AlarmTime?.localDateTime))
+        }
+    }
 }

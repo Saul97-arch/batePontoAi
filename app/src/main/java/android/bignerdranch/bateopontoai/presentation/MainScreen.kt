@@ -1,14 +1,16 @@
 package android.bignerdranch.bateopontoai.presentation
 
+import android.bignerdranch.bateopontoai.AlarmReceiver
 import android.bignerdranch.bateopontoai.R
 import android.bignerdranch.bateopontoai.data.AndroidAlarmScheduler
+import android.bignerdranch.bateopontoai.data.Repository
+import android.bignerdranch.bateopontoai.data.RepositoryImpl
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -16,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,10 @@ fun MainScreen(
 
     val context = LocalContext.current
     val scheduler = AndroidAlarmScheduler(context)
+    val repository : Repository = RepositoryImpl.instance()
+    repository.setCurrentAlarmStateData(AlarmReceiver().currentAlarmState.value)
     viewModel.scheduler = scheduler
+    viewModel.repository = repository
 
     Scaffold(
         floatingActionButton = {
@@ -67,7 +71,7 @@ fun MainScreen(
                         .background(Color(red = 248, green = 244, blue = 247, alpha = 255))
                 ) {
                     Column(modifier = Modifier.padding(32.dp)) {
-
+                        // BATA O PONTO, coloque um texto assim
                         TimeButton(
                             context = context,
                             timeState = viewModel.entry1,
@@ -103,17 +107,8 @@ fun MainScreen(
                         )
                     }
                 }
-                // TODO this will be component with his own logic in the future
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(text = "Alarme definido", color = Color.White)
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(text = "11:59", color = Color.White)
-                }
+
+                CurrentAlarm(viewModel)
             }
         }
     }

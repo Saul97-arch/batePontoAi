@@ -1,3 +1,5 @@
 package android.bignerdranch.bateopontoai.data
 
-data class AlarmItem(val alarmName : String, val timeInMilliseconds : Long?)
+import java.time.LocalDateTime
+
+data class AlarmItem(val alarmName : String, val localDateTime : LocalDateTime?)
