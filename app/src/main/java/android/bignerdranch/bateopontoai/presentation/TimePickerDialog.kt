@@ -7,13 +7,14 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.util.*
 
 @Composable
 fun timePickerDialog(
     context: Context,
-    timeState: MutableState<HoursAndMinutes>,
+    timeState: MutableState<LocalDateTime?>,
     viewModel: MainScreenViewModel? = null
 ): TimePickerDialog {
 
@@ -24,10 +25,11 @@ fun timePickerDialog(
     return TimePickerDialog(
         context,
         { _, hours: Int, minutes: Int ->
-            timeState.value = HoursAndMinutes(hours.toLong(), minutes)
 
             val currentTime = LocalDate.from(LocalDate.now())
                 .atTime(hours, minutes)
+
+            timeState.value = currentTime
 
             viewModel?.entry1AlarmTime = AlarmItem("Entrada 1", currentTime)
             viewModel?.onEntry1Changed()

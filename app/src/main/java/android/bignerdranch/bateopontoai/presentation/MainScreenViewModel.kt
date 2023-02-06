@@ -2,9 +2,7 @@ package android.bignerdranch.bateopontoai.presentation
 
 import android.bignerdranch.bateopontoai.data.AlarmItem
 import android.bignerdranch.bateopontoai.data.AndroidAlarmScheduler
-import android.bignerdranch.bateopontoai.data.HoursAndMinutes
 import android.bignerdranch.bateopontoai.data.Repository
-import android.bignerdranch.bateopontoai.data.RepositoryImpl
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -17,10 +15,10 @@ class MainScreenViewModel : ViewModel() {
     private var round1: Long = 3L
     private var round2: Long = 5L
 
-    val entry1 = mutableStateOf(HoursAndMinutes())
-    val out1 = mutableStateOf(HoursAndMinutes())
-    val entry2 = mutableStateOf(HoursAndMinutes())
-    val out2 = mutableStateOf(HoursAndMinutes())
+    val entry1: MutableState<LocalDateTime?> = mutableStateOf(null)
+    val out1: MutableState<LocalDateTime?> = mutableStateOf(null)
+    val entry2: MutableState<LocalDateTime?> = mutableStateOf(null)
+    val out2: MutableState<LocalDateTime?> = mutableStateOf(null)
 
     lateinit var scheduler: AndroidAlarmScheduler
 
@@ -30,10 +28,7 @@ class MainScreenViewModel : ViewModel() {
     var out2AlarmTime: AlarmItem? = null
 
     fun onEntry1Changed() {
-        val entry1Hours = entry1.value.hours
-        val entry1Minutes = entry1.value.minutes
-
-        setOut1Value(entry1Hours, entry1Minutes)
+        setOut1Value(entry1)
         setEntry2Value()
         setOut2Value()
         setCurrentAlarm()
@@ -47,12 +42,12 @@ class MainScreenViewModel : ViewModel() {
         repository?.setCurrentAlarmStateData(alarmItem)
     }
 
-    private fun setOut1Value(hours: Long?, minutes: Int?) {
+    private fun setOut1Value(entry1: MutableState<LocalDateTime?>) {
         out1AlarmTime = AlarmItem(
             "Saída 1",
             entry1AlarmTime?.localDateTime?.plusHours(round1)
         )
-        out1.value = HoursAndMinutes(hours?.plus(round1), minutes)
+        out1.value = entry1.value?.plusHours(round1)
         out1AlarmTime?.let { scheduler.schedule(it) }
     }
 
@@ -62,7 +57,7 @@ class MainScreenViewModel : ViewModel() {
             out1AlarmTime?.localDateTime?.plusHours(lunchTime)
         )
         entry2AlarmTime?.let { scheduler.schedule(it) }
-        entry2.value = HoursAndMinutes(out1.value.hours?.plus(lunchTime), out1.value.minutes)
+        entry2.value = out1.value?.plusHours(lunchTime)
     }
 
     private fun setOut2Value() {
@@ -71,7 +66,7 @@ class MainScreenViewModel : ViewModel() {
             entry2AlarmTime?.localDateTime?.plusHours(round2)
         )
         out2AlarmTime?.let { scheduler.schedule(it) }
-        out2.value = HoursAndMinutes(entry2.value.hours?.plus(round2), entry2.value.minutes)
+        out2.value = entry2.value?.plusHours(round2)
     }
 
     private fun setCurrentAlarm() {

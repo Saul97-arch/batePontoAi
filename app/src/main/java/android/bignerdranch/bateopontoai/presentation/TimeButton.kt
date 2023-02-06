@@ -10,22 +10,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TimeButton(
     context: Context,
-    timeState: MutableState<HoursAndMinutes>,
+    timeState: MutableState<LocalDateTime?>,
     text: String,
     viewModel: MainScreenViewModel,
 ) {
-    // TODO time converter to proper string time
-    // 9:0 to 9:00
-    // 12:0 to 12:00
     val timePickerDialog = timePickerDialog(
         context = context,
         timeState = timeState,
         viewModel
     )
+
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
 
     return Button(
         onClick = {
@@ -42,12 +44,7 @@ fun TimeButton(
         ),
     ) {
         Text(
-            text =
-            if (timeState.value.hours == null && timeState.value.minutes == null) {
-                text
-            } else {
-                "${timeState.value.hours}:${timeState.value.minutes}"
-            }
+            text = timeState.value?.format(formatter) ?: text
         )
     }
 }

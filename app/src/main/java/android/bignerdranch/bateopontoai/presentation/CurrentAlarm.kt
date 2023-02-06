@@ -11,9 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun CurrentAlarm(viewModel: MainScreenViewModel) {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
@@ -23,7 +25,8 @@ fun CurrentAlarm(viewModel: MainScreenViewModel) {
         Text(text = "Próximo alarme", color = Color.White)
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "${viewModel.getCurrentAlarmTimeData()?.value?.localDateTime?.hour}: ${viewModel.getCurrentAlarmTimeData()?.value?.localDateTime?.minute}",
+            text = viewModel.getCurrentAlarmTimeData()?.value?.localDateTime?.format(formatter)
+                ?: "A definir",
             color = Color.White
         )
     }
